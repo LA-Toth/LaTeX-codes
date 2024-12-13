@@ -1,0 +1,12 @@
+% a format for menu delimited by \textrightarrow
+% where each menu entry is \emph
+% like \emph{File -> Open}, written as \menu{File}[Open]
+% up to 3 optional args (beyond that the menu UX is bad)
+\NewDocumentCommand\menu{m!ooo}{%
+    \emph{#1%
+        \IfNoValueF{#2}{\space\textrightarrow\space#2%
+            \IfNoValueF{#3}{\space\textrightarrow\space#3%
+                \IfNoValueF{#4}{\space\textrightarrow\space#4}%
+            }%
+        }}%
+}

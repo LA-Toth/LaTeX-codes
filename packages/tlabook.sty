@@ -1,0 +1,72 @@
+% Copyright (c) 2024, Laszlo Attila Toth
+%
+% My main set up for a book
+% May also work for other documents
+%
+% It uses titlesec, so not compatible with scrbook (KOMA-Script)
+
+% initialization
+\NeedsTeXFormat{LaTeX2e}
+\ProvidesPackage{tlabook}[2024/12/06]
+% packages
+\RequirePackage{fancyhdr}
+\RequirePackage{shorttoc}
+\RequirePackage{titlesec}
+\RequirePackage{hyperref}
+\RequirePackage{cleveref}
+
+% initial code
+% options
+% loading options
+% package loading
+% main code
+
+\definecolor{darkblue}{rgb}{0,0,0.4}
+
+\hypersetup{
+    colorlinks = true,
+    linkcolor=darkblue,
+    urlcolor=blue,
+    citecolor=blue
+}
+
+% Increase the vertical space between the paragraphs
+\setlength{\parskip}{5pt}
+
+\fancypagestyle{twoside}{%
+    \fancyhf{}%
+    \fancyhead[CE]{{\textcolor{black}{\nouppercase{\leftmark}}}}%
+    \fancyhead[CO]{{\textcolor{black}{\nouppercase{\rightmark}}}}%
+    \fancyhead[RE]{\thepage}
+    \fancyhead[LO]{\thepage}
+    \renewcommand{\headrulewidth}{1pt}}%
+
+% chapter header format
+\titleformat{\chapter}[display]{%
+    \Huge\centering%
+}{%
+    \raggedleft{\resizebox{2\baselineskip}{!}{\itshape\color{gray} \thechapter}}%
+}{1ex}{%
+    \titleline{\color{gray}\titlerule[1pt]\vspace{1ex}}%
+}[\vspace{1.5ex}\titleline{\color{gray}\titlerule[1pt]}]
+
+%
+% Add support of brief TOC, like in a Manning book
+%
+\newcommand{\brieftableofcontents}{\shorttableofcontents{Brief Contents}{0}}
+
+% a format for menu delimited by \textrightarrow
+% where each menu entry is \emph
+% like \emph{File -> Open}, written as \menu{File}[Open]
+% up to 3 optional args (beyond that the menu UX is bad)
+\NewDocumentCommand\menu{m!ooo}{%
+    \emph{#1%
+        \IfNoValueF{#2}{\space\textrightarrow\space#2%
+            \IfNoValueF{#3}{\space\textrightarrow\space#3%
+                \IfNoValueF{#4}{\space\textrightarrow\space#4}%
+            }%
+        }}%
+}
+
+% When the \emph and the \index are needed at the same time
+\newcommand{\emphidx}[1]{\emph{#1}\index{#1}}

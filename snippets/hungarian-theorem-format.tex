@@ -1,0 +1,11 @@
+% Change the order or theorem "type" name and number
+% to end with the number
+
+\makeatletter
+\gdef\th@magyar{\normalfont\slshape
+    \def\@begintheorem##1##2{%
+        \item[\hskip\labelsep \theorem@headerfont ##2.\ ##1.]}%
+    \def\@opargbegintheorem##1##2##3{%
+        \item[\hskip\labelsep \theorem@headerfont ##2. ##1.\ (##3)]}}
+\makeatother
+

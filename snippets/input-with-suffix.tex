@@ -1,0 +1,28 @@
+% \inputx{content/chaptername}
+% is essentially:
+% \input{content/chaptername}
+% \input{content/chaptername-technical}
+% But the second input is conditional:
+%   includeTechnical boolean must be true
+%   and
+%   the file must exist (content/chaptername-technical.tex)
+% 
+% if the file named exactly as "extra/skipTechnical" without
+% any suffix (aka. extension) is set, includeTechnical is false
+% otherwise true.
+%
+% \inputwithsuffix is the generic version,
+% the boolean name is the second optional parameter
+% and the file suffix ("technical") is the first optional
+
+\usepackage{ifthen}
+
+\newboolean{includeTechnical}
+\IfFileExists{extra/skipTechnical}{\setboolean{includeTechnical}{false}}{\setboolean{includeTechnical}{true}}%
+
+\NewDocumentCommand{\inputwithsuffix}{O{technical} O{includeTechnical} m}{%
+    \input{#3}%
+    \ifthenelse{\boolean{#2}}{\IfFileExists{#3-#1.tex}{\input{#3-#1}}{}}{}%
+}
+
+\newcommand{\inputx}[1]{\inputwithsuffix{#1}}

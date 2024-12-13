@@ -1,0 +1,10 @@
+% For section (article)
+
+\theoremstyle{magyar}
+\theoremheaderfont{\itshape\bfseries}
+\newtheorem{de}{definíció}[section]
+\newtheorem{te}{tétel}[section]
+\newtheorem{bi}{bizonyítás}[section]
+\newtheorem{ko}{következmény}[section]
+\newtheorem{me}{megjegyzés}[section]
+\newtheorem{al}{állítás}[section]
