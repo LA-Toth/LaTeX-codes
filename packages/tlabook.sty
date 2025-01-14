@@ -13,8 +13,11 @@
 \RequirePackage{fancyhdr}
 \RequirePackage{shorttoc}
 \RequirePackage{titlesec}
+\RequirePackage{titletoc}
+\RequirePackage{amssymb}
 \RequirePackage{hyperref}
-\RequirePackage{cleveref}
+\RequirePackage{varioref}
+\RequirePackage{cleveref} % last
 
 % initial code
 % options
@@ -22,7 +25,8 @@
 % package loading
 % main code
 
-\definecolor{darkblue}{rgb}{0,0,0.4}
+\definecolor{darkblue}{rgb}{0, 0, 0.4}
+\definecolor{gold}{rgb}{1.0, 0.84, 0.0}
 
 \hypersetup{
     colorlinks = true,
@@ -42,6 +46,7 @@
     \fancyhead[LO]{\thepage}
     \renewcommand{\headrulewidth}{1pt}}%
 
+\makeatletter
 % chapter header format
 \titleformat{\chapter}[display]{%
     \Huge\centering%
@@ -49,7 +54,15 @@
     \raggedleft{\resizebox{2\baselineskip}{!}{\itshape\color{gray} \thechapter}}%
 }{1ex}{%
     \titleline{\color{gray}\titlerule[1pt]\vspace{1ex}}%
-}[\vspace{1.5ex}\titleline{\color{gray}\titlerule[1pt]}]
+}[\vspace{1.5ex}\titleline{\color{gray}\titlerule[1pt]}%
+    {\startcontents\c@tocdepth=1\printcontents{p-}{1}{\contentsmargin{0pt}}}
+]
+\makeatother
+
+\newcommand\tocseparatorsymbol{{\tiny\ensuremath{\textcolor{gray}\blacksquare}}}
+\titlespacing*{\chapter}{1pc}{*4}{*2.3}[1pc]
+\titlecontents*{p-section}[0pt]{\small\itshape\fillast}{}{}{}[ --- ][.]
+\titlecontents*{subsection}[50pt]{\small\itshape\fillast}{}{}{\enskip\thecontentspage}[\enskip\tocseparatorsymbol\enskip]
 
 %
 % Add support of brief TOC, like in a Manning book
