@@ -9,12 +9,17 @@
 \NeedsTeXFormat{LaTeX2e}
 \ProvidesPackage{tlabook}[2024/12/06]
 % packages
+\usepackage[a4paper,twoside]{geometry}
 \RequirePackage{color}
+\RequirePackage{expl3}
+\RequirePackage{fontspec} % LuaLaTeX
 \RequirePackage{fancyhdr}
+\RequirePackage{mdframed}
 \RequirePackage{shorttoc}
 \RequirePackage{titlesec}
 \RequirePackage{titletoc}
 \RequirePackage{amssymb}
+\RequirePackage{marginnote}
 \RequirePackage{hyperref}
 \RequirePackage{varioref}
 \RequirePackage{cleveref} % last
@@ -27,36 +32,118 @@
 
 \definecolor{darkblue}{rgb}{0, 0, 0.4}
 \definecolor{gold}{rgb}{1.0, 0.84, 0.0}
+\definecolor{ChapNoColor}{cmyk}{0.17,0.12,0.12,0}	% Chapter Label(No.)
+%\definecolor{ChapTitleColor}{cmyk}{0.77,0.52,0.33,0.09} % Chapter Title Text
+\definecolor{ChapTitleColor}{rgb}{.2,.2,.8}
+\definecolor{SecLevelsColor}{RGB}{71, 107, 133} % Color of Sectional Levels Head
+\definecolor{HighlightBodyColor}{cmyk}{0.57,0.48,0.48,0.15} % Highlight Env. Color
+\definecolor{ChapTopBack}{cmyk}{0.02,0.03,0.08,0} % ChapterTopics Env. Background
 
 \hypersetup{
-    colorlinks = true,
-    linkcolor=darkblue,
-    urlcolor=blue,
-    citecolor=blue
+  colorlinks = true,
+  linkcolor=darkblue,
+  urlcolor=blue,
+  citecolor=blue
 }
 
 % Increase the vertical space between the paragraphs
 \setlength{\parskip}{5pt}
 
+\setmainfont{EB Garamond}
+%\setheadingfont{kurier}
+
 \fancypagestyle{twoside}{%
-    \fancyhf{}%
-    \fancyhead[CE]{{\textcolor{black}{\nouppercase{\leftmark}}}}%
-    \fancyhead[CO]{{\textcolor{black}{\nouppercase{\rightmark}}}}%
-    \fancyhead[RE]{\thepage}
-    \fancyhead[LO]{\thepage}
-    \renewcommand{\headrulewidth}{1pt}}%
+  \fancyhf{}%
+  \fancyhead[CE]{{\textcolor{black}{\nouppercase{\leftmark}}}}%
+  \fancyhead[CO]{{\textcolor{black}{\nouppercase{\rightmark}}}}%
+  \fancyhead[RE]{\thepage}
+  \fancyhead[LO]{\thepage}
+  \renewcommand{\headrulewidth}{0pt}}
+\fancypagestyle{ChapterMainStyle}{
+  \fancyhf{}%
+  \fancyhead[CE]{{\textcolor{black}{\nouppercase{\leftmark}}}}%
+  \fancyhead[CO]{{\textcolor{black}{\nouppercase{\rightmark}}}}%
+  \fancyhead[RE]{\thepage}
+  \fancyhead[LO]{\thepage}
+  \renewcommand{\headrulewidth}{0pt}}
+
+\fancypagestyle{FMPageStyle}{
+  \fancyhf{}
+  \renewcommand{\headrulewidth}{0pt}
+}
+\fancypagestyle{FrontMatterMainPages}{
+  \fancyhf{}
+  \renewcommand{\headrulewidth}{0pt}
+}
+
+% Custom full-width rule
+\renewcommand{\headrule}{%
+  \makebox[0pt][l]{\rule[-0.3\headsep]{\paperwidth}{1pt}}%
+}
+
+\titleclass{\part}{top}
+\titleformat{\part}[display]
+{\vspace*{-3cm}\raggedleft\color{ChapTitleColor}}
+{
+  \raggedleft\resizebox{!}{\baselineskip}{\underline{\partname~\thepart}}
+}
+{20pt}
+{\ChapHeadFont\fontsize{40pt}{42pt}\selectfont}[\vspace{-5cm}]
 
 \makeatletter
 % chapter header format
-\titleformat{\chapter}[display]{%
-    \Huge\centering%
-}{%
-    \raggedleft{\resizebox{2\baselineskip}{!}{\itshape\color{gray} \thechapter}}%
-}{1ex}{%
-    \titleline{\color{gray}\titlerule[1pt]\vspace{1ex}}%
-}[\vspace{1.5ex}\titleline{\color{gray}\titlerule[1pt]}%
-    {\startcontents\c@tocdepth=1\printcontents{p-}{1}{\contentsmargin{0pt}}}
-]
+%\titleformat{\chapter}[display]{%
+%    \Huge\centering%
+%}{%
+%    \raggedleft{\resizebox{2\baselineskip}{!}{\itshape\color{gray} \thechapter}}%
+%}{1ex}{%
+%    \titleline{\color{gray}\titlerule[1pt]\vspace{1ex}}%
+%}[\vspace{1.5ex}\titleline{\color{gray}\titlerule[1pt]}%
+%    {\startcontents\c@tocdepth=1\printcontents{p-}{1}{\contentsmargin{0pt}}}
+%]
+%\definecolor{ChapTitleColor}{rgb}{0,0,1}
+%\definecolor{ChapNoColor}{rgb}{0,0,1}
+\newcommand\ChapHeadFont{}
+\newcommand{\LowerRule}[1]{\vspace{-15pt}\rule{#1\linewidth}{0.5pt}}
+%\newcommand\selectfont{}
+%% The Chapter Head Format
+%% Centering the Chapter Title Text Vertically over the Chapter Label(No.):                                                                     1. Measure the heights of both and assign them into length variables.                                                                  2. Apply: S <sep value, a length par> = -(Z-Y)/2, where: Z<Label Height>, Y<Text>
+\titleformat{\chapter}[display]
+%       {\raggedleft\color{ChapNoColor}}
+%
+{%
+  \vspace*{1.5ex}\huge\centering%
+}%
+%{\ChapHeadFont\fontsize{225pt}{230pt}\selectfont\thechapter}
+% {\ChapHeadFont\fontsize{225pt}{230pt}\selectfont\thechapter}
+%{\raggedleft{\resizebox{2\baselineskip}{!}{\itshape\color{gray} \thechapter}}}
+{\raggedleft{\resizebox{!}{6\baselineskip}{\itshape\fontsize{225pt}{230pt}\color{ChapNoColor} \thechapter}}}
+{-110pt}
+{\ChapHeadFont\fontsize{30pt}{30pt}\selectfont\color{ChapTitleColor}\bf}
+[\LowerRule{0.7}]
+
+\newcommand{\useappendixchapterformat}{
+  \titleformat{\chapter}[display]
+  %       {\raggedleft\color{ChapNoColor}}
+  %
+  {%
+    \vspace*{1.5ex}\huge\centering%
+  }%
+  %{\ChapHeadFont\fontsize{225pt}{230pt}\selectfont\thechapter}
+  % {\ChapHeadFont\fontsize{225pt}{230pt}\selectfont\thechapter}
+  %{\raggedleft{\resizebox{2\baselineskip}{!}{\itshape\color{gray} \thechapter}}}
+  {\raggedleft{\itshape\color{ChapNoColor}\textbf{Appendix}\resizebox{!}{6\baselineskip}{%
+        \itshape\color{ChapNoColor} \thechapter}}}%
+  {-110pt}%
+  {\ChapHeadFont\fontsize{30pt}{30pt}\selectfont\color{ChapTitleColor}\bf}
+  [\LowerRule{0.7}]
+}
+
+%% Formatting the Front Matter Numberless Chapters, Preface, Acknowledgments,...
+\titleformat{name=\chapter,numberless}[display]
+{\vspace*{7cm}\raggedleft}{}{0pt}
+{\ChapHeadFont\fontsize{30pt}{30pt}\selectfont\color{ChapTitleColor}}
+[\LowerRule{1}]
 \makeatother
 
 \newcommand\tocseparatorsymbol{{\tiny\ensuremath{\textcolor{gray}\blacksquare}}}
@@ -84,3 +171,101 @@
 
 % When the \emph and the \index are needed at the same time
 \newcommand{\emphidx}[1]{\emph{#1}\index{#1}}
+
+\newcommand{\ChapterMarkFont}{}
+\newcommand{\HighlightTitleFont}{}
+\newcommand{\HighlightBodyFont}{}
+\newcommand{\BigPartLetterFont}{}
+\newcommand{\BigPartLetter}[1]{
+  {\BigPartLetterFont\fontsize{35}{36}\selectfont\color{ChapTitleColor}#1}
+}
+
+\newcommand{\chapterskip}{\vspace{2cm}}
+
+%\renewcommand\raggedrightmarginnote{\centering}
+\renewcommand\marginfont{\strut\color{darkblue}\sffamily\it}
+\NewDocumentCommand{\TlaBookMarginNote}{m O{8pt}}{%
+  \marginnote{#1}[#2]}
+
+\usepackage[all]{nowidow}
+
+\ExplSyntaxOn
+
+% TlaBookDefineSCItem::
+% new commands: #2 => \sc#2 and \sc#2i (i: to add to the index, as #1!#2)
+% recommended usage: indirectly, by defining eg:
+% \newcommand\definecustomer[1]{\TlaBookDefineSCItem{customer}{#1}}
+% and then \definecustomer{IBM} (\scibm, \scibmi)
+\newcommand{\TlaBookDefineSCItem}[2]{
+  \define_TBscitem:nn {#1} {#2}
+}
+
+% Internal function to define commands
+\cs_new_protected:Nn \define_TBscitem:nn {
+  % #1 = category (e.g., customers, devices)
+  % #2 = display name (e.g., IBM)
+
+  % Convert display name to lowercase for command name
+  \tl_set:Nn \l_tmpa_tl { \tl_lower_case:n {#2} }
+
+  % Define \<lowercase> as small caps
+  \cs_new:cpn { sc \l_tmpa_tl } { \textsc{#2} }
+
+  % Define \<lowercase>i as indexed version
+  \cs_new:cpn { sc \l_tmpa_tl i } {
+    \csname \l_tmpa_tl \endcsname \index{#1!#2}
+  }
+}
+
+\ExplSyntaxOff
+
+\newcommand{\blankpage}{
+  \clearpage
+  \thispagestyle{empty}
+  \null\vfill
+  \begin{center}
+    \textit{This page is intentionally left blank}
+  \end{center}
+  \vfill\null
+  \clearpage
+}
+\newcommand{\maybeBlankPage}{
+  \clearpage
+  \ifodd\value{page}\else
+    \blankpage
+  \fi
+}
+
+%\usepackage{etoolbox}
+% \pretocmd{\chapter}{\maybeBlankPage}{}{}
+
+\mdfsetup{
+  fontcolor=ChapTitleColor, backgroundcolor=ChapTopBack,
+  innertopmargin=0.5cm,  innerbottommargin=0.5cm,
+  innerleftmargin=0.75cm, innerrightmargin=1cm,
+  topline=false, bottomline=false, rightline=false, leftline=false
+}
+
+\newenvironment{TlaBookNote}{
+  \begin{center}
+    \begin{minipage}{0.9\textwidth}
+      {\ChapterMarkFont\fontsize{11.5pt}{12pt}\selectfont
+        \color{SecLevelsColor} NOTE~ }
+      }{
+    \end{minipage}
+  \end{center}
+}
+
+\newenvironment{TlaBookHighlight}[1]{ % Use: <\par\noindent> infront of Body Paragraph
+  \vspace{0.5cm}
+  \begin{mdframed}
+    {\HighlightTitleFont\fontsize{14}{15}\selectfont #1}
+    \vspace{5pt}
+    \begin{spacing}{1.2}
+      \HighlightBodyFont\fontsize{12}{13}\color{HighlightBodyColor}\selectfont
+      }{
+    \end{spacing}
+    \vspace{-0.5pt}
+  \end{mdframed}
+  \vspace{0.5cm}
+}
