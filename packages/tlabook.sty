@@ -1,4 +1,4 @@
-% Copyright (c) 2024, Laszlo Attila Toth
+% Copyright (c) 2024-2025, Laszlo Attila Toth
 %
 % My main set up for a book
 % May also work for other documents
@@ -7,14 +7,17 @@
 
 % initialization
 \NeedsTeXFormat{LaTeX2e}
-\ProvidesPackage{tlabook}[2024/12/06]
+\ProvidesPackage{tlabook}[2025/11/26]
 % packages
-\usepackage[a4paper,twoside]{geometry}
+\usepackage[a4paper,twoside,top=1.5cm,bottom=2.5cm]{geometry}
+
 \RequirePackage{color}
+\RequirePackage{calc}
 \RequirePackage{expl3}
 \RequirePackage{fontspec} % LuaLaTeX
 \RequirePackage{fancyhdr}
-\RequirePackage{mdframed}
+\RequirePackage{listings}
+\RequirePackage{tcolorbox}
 \RequirePackage{shorttoc}
 \RequirePackage{titlesec}
 \RequirePackage{titletoc}
@@ -48,23 +51,53 @@
 
 % Increase the vertical space between the paragraphs
 \setlength{\parskip}{5pt}
+\setlength{\headheight}{15pt}
+
+\setmainfont{EB Garamond}
+%\setheadingfont{kurier}
 
 \setmainfont{EB Garamond}
 %\setheadingfont{kurier}
 
 \fancypagestyle{twoside}{%
   \fancyhf{}%
-  \fancyhead[CE]{{\textcolor{black}{\nouppercase{\leftmark}}}}%
-  \fancyhead[CO]{{\textcolor{black}{\nouppercase{\rightmark}}}}%
+  \fancyhead[CE]{{\textcolor{black}{\nouppercase{\textbf \leftmark}}}}%
+  \fancyhead[CO]{{\textcolor{black}{\nouppercase{\textbf \rightmark}}}}%
   \fancyhead[RE]{\thepage}
   \fancyhead[LO]{\thepage}
-  \renewcommand{\headrulewidth}{0pt}}
+}
 \fancypagestyle{ChapterMainStyle}{
   \fancyhf{}%
-  \fancyhead[CE]{{\textcolor{black}{\nouppercase{\leftmark}}}}%
-  \fancyhead[CO]{{\textcolor{black}{\nouppercase{\rightmark}}}}%
-  \fancyhead[RE]{\thepage}
-  \fancyhead[LO]{\thepage}
+  \fancyhead[CE]{{\textcolor{black}{\nouppercase{\bf\leftmark}}}}%
+  \fancyhead[CO]{{\textcolor{black}{\nouppercase{\bf\rightmark}}}}%
+  \fancyhead[RO]{%
+    \makebox[0pt][l]{%
+      \begin{tikzpicture}[remember picture,overlay]
+        \fill[blue!20]
+          ([xshift=-\marginparwidth+\marginparsep]current page.north east) rectangle
+          ([yshift=-1in-\topmargin-\headheight-\voffset-\headruleskip]current page.north east);
+        \draw[line width=1.4pt]
+          ([xshift=-\marginparwidth+\marginparsep]current page.north east) --
+          ([xshift=-\marginparwidth+\marginparsep,yshift=-1in-\topmargin-\headheight-\voffset-\headruleskip]current page.north east);
+      \end{tikzpicture}%
+      \hspace*{0.7em}%
+      {\bf\large \thepage}%
+    }%
+  }
+  \fancyhead[LE]{%
+    \makebox[0pt][r]{%
+      \begin{tikzpicture}[remember picture,overlay]
+        \fill[blue!20]
+          (current page.north west) rectangle
+          ([xshift=\marginparwidth-\marginparsep,yshift=-1in-\topmargin-\headheight-\voffset-\headruleskip]current page.north west);
+        \draw[line width=1.4pt]
+          ([xshift=\marginparwidth-\marginparsep]current page.north west) --
+          ([xshift=\marginparwidth-\marginparsep,yshift=-1in-\topmargin-\headheight-\voffset-\headruleskip]current page.north west);
+      \end{tikzpicture}%
+      {\bf\large \thepage}%
+      \hspace*{0.7em}%
+    }%
+  }
   \renewcommand{\headrulewidth}{0pt}}
 
 \fancypagestyle{FMPageStyle}{
@@ -75,17 +108,23 @@
   \fancyhf{}
   \renewcommand{\headrulewidth}{0pt}
 }
-
-% Custom full-width rule
 \renewcommand{\headrule}{%
-  \makebox[0pt][l]{\rule[-0.3\headsep]{\paperwidth}{1pt}}%
+  \vskip-6pt
+  \vskip-\headruleskip
+  \ifodd\value{page}%
+    \hspace*{-\oddsidemargin}\hspace*{-1in}%
+  \else%
+    \hspace*{-\evensidemargin}\hspace*{-1in}%
+  \fi%
+  \makebox[0pt][l]{\rule{\paperwidth}{0.5pt}}%
+  \vskip\headruleskip
+  \vskip\headrulewidth
 }
-
 \titleclass{\part}{top}
 \titleformat{\part}[display]
 {\vspace*{-3cm}\raggedleft\color{ChapTitleColor}}
 {
-  \raggedleft\resizebox{!}{\baselineskip}{\underline{\partname~\thepart}}
+    \raggedleft\resizebox{!}{\baselineskip}{\underline{\partname~\thepart}}
 }
 {20pt}
 {\ChapHeadFont\fontsize{40pt}{42pt}\selectfont}[\vspace{-5cm}]
@@ -107,12 +146,14 @@
 \newcommand{\LowerRule}[1]{\vspace{-15pt}\rule{#1\linewidth}{0.5pt}}
 %\newcommand\selectfont{}
 %% The Chapter Head Format
-%% Centering the Chapter Title Text Vertically over the Chapter Label(No.):                                                                     1. Measure the heights of both and assign them into length variables.                                                                  2. Apply: S <sep value, a length par> = -(Z-Y)/2, where: Z<Label Height>, Y<Text>
+%% Centering the Chapter Title Text Vertically over the Chapter Label(No.):
+%%   1. Measure the heights of both and assign them into length variables.
+%%   2. Apply: S <sep value, a length par> = -(Z-Y)/2, where: Z<Label Height>, Y<Text>
 \titleformat{\chapter}[display]
 %       {\raggedleft\color{ChapNoColor}}
 %
 {%
-  \vspace*{1.5ex}\huge\centering%
+    \vspace*{1.5ex}\huge\centering%
 }%
 %{\ChapHeadFont\fontsize{225pt}{230pt}\selectfont\thechapter}
 % {\ChapHeadFont\fontsize{225pt}{230pt}\selectfont\thechapter}
@@ -123,20 +164,20 @@
 [\LowerRule{0.7}]
 
 \newcommand{\useappendixchapterformat}{
-  \titleformat{\chapter}[display]
-  %       {\raggedleft\color{ChapNoColor}}
-  %
-  {%
-    \vspace*{1.5ex}\huge\centering%
-  }%
-  %{\ChapHeadFont\fontsize{225pt}{230pt}\selectfont\thechapter}
-  % {\ChapHeadFont\fontsize{225pt}{230pt}\selectfont\thechapter}
-  %{\raggedleft{\resizebox{2\baselineskip}{!}{\itshape\color{gray} \thechapter}}}
-  {\raggedleft{\itshape\color{ChapNoColor}\textbf{Appendix}\resizebox{!}{6\baselineskip}{%
-        \itshape\color{ChapNoColor} \thechapter}}}%
-  {-110pt}%
-  {\ChapHeadFont\fontsize{30pt}{30pt}\selectfont\color{ChapTitleColor}\bf}
-  [\LowerRule{0.7}]
+    \titleformat{\chapter}[display]
+    %       {\raggedleft\color{ChapNoColor}}
+    %
+    {%
+        \vspace*{1.5ex}\huge\centering%
+    }%
+    %{\ChapHeadFont\fontsize{225pt}{230pt}\selectfont\thechapter}
+    % {\ChapHeadFont\fontsize{225pt}{230pt}\selectfont\thechapter}
+    %{\raggedleft{\resizebox{2\baselineskip}{!}{\itshape\color{gray} \thechapter}}}
+    {\raggedleft{\itshape\color{ChapNoColor}\textbf{Appendix}\resizebox{!}{6\baselineskip}{%
+    \itshape\color{ChapNoColor} \thechapter}}}%
+    {-110pt}%
+    {\ChapHeadFont\fontsize{30pt}{30pt}\selectfont\color{ChapTitleColor}\bf}
+    [\LowerRule{0.7}]
 }
 
 %% Formatting the Front Matter Numberless Chapters, Preface, Acknowledgments,...
@@ -177,7 +218,7 @@
 \newcommand{\HighlightBodyFont}{}
 \newcommand{\BigPartLetterFont}{}
 \newcommand{\BigPartLetter}[1]{
-  {\BigPartLetterFont\fontsize{35}{36}\selectfont\color{ChapTitleColor}#1}
+    {\BigPartLetterFont\fontsize{35}{36}\selectfont\color{ChapTitleColor}#1}
 }
 
 \newcommand{\chapterskip}{\vspace{2cm}}
@@ -236,16 +277,6 @@
   \fi
 }
 
-%\usepackage{etoolbox}
-% \pretocmd{\chapter}{\maybeBlankPage}{}{}
-
-\mdfsetup{
-  fontcolor=ChapTitleColor, backgroundcolor=ChapTopBack,
-  innertopmargin=0.5cm,  innerbottommargin=0.5cm,
-  innerleftmargin=0.75cm, innerrightmargin=1cm,
-  topline=false, bottomline=false, rightline=false, leftline=false
-}
-
 \newenvironment{TlaBookNote}{
   \begin{center}
     \begin{minipage}{0.9\textwidth}
@@ -258,7 +289,7 @@
 
 \newenvironment{TlaBookHighlight}[1]{ % Use: <\par\noindent> infront of Body Paragraph
   \vspace{0.5cm}
-  \begin{mdframed}
+  \begin{tcolorbox}
     {\HighlightTitleFont\fontsize{14}{15}\selectfont #1}
     \vspace{5pt}
     \begin{spacing}{1.2}
@@ -266,6 +297,35 @@
       }{
     \end{spacing}
     \vspace{-0.5pt}
-  \end{mdframed}
+  \end{tcolorbox}
   \vspace{0.5cm}
 }
+
+\lstdefinestyle{yaml}{
+     basicstyle=\color{blue}\footnotesize,
+     rulecolor=\color{black},
+     string=[s]{'}{'},
+     stringstyle=\color{blue},
+     comment=[l]{:},
+     commentstyle=\color{black},
+     morecomment=[l]{-}
+ }
+
+\makeatletter
+\def\cleardoublepage{%
+  \clearpage
+  \if@twoside
+    \ifodd\c@page
+    \else
+      \null
+      \thispagestyle{empty}% no header/footer
+      \vfill
+      \begin{center}
+        \textit{This page intentionally left blank}
+      \end{center}
+      \vfill
+      \newpage
+    \fi
+  \fi
+}
+\makeatother
