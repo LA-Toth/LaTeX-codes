@@ -1,0 +1,85 @@
+\DocumentMetadata{lang=en}
+\documentclass[a4paper,10pt,twoside,openright]{book}
+
+%% packages to use with the main text (title, etc.)
+\usepackage{tlabook}
+\usepackage{datetime}
+
+%% packages for the examples
+\usepackage{kantlipsum}
+
+\title{A Fancy Dcoument}
+\subtitle{The Definitive Guide}
+\author{Johnk Smith}
+\email{email@example.com}
+\date{\currenttime, \today}
+
+\makeindex
+
+\begin{document}
+
+\frontmatter
+
+%% The title page (or use \maketitle)
+\maketitle
+%% The back side of the title page
+\thispagestyle{empty}
+{
+    \phantom{.}%
+    \bigskip\bigskip
+
+    \noindent%
+    \makeatletter%
+    \textcopyright{} 2024-2025, \@author%
+    \makeatother
+
+    \vfill
+    \begin{flushright}
+        \par\noindent Design:\\
+        \textcopyright{} 2024 and later, Laszlo Attila Toth\\
+        For published packages visit https://github.com/LA-Toth/LaTeX-codes
+    \end{flushright}
+}
+
+\tableofcontents
+
+\pagestyle{TBMainPageStyle}
+
+\chapter*{Preface}
+\kant[1-15]
+
+\mainmatter
+
+\part{First Part}
+
+\BigPartLetter{C}hapters 1-4 of this book is about this book.
+\kant[42]
+
+\chapter{The First Chapter}
+
+\kant[1-8]
+\section{First Section}
+\textbf{Index Entry}\index{An index entry from the First Chapter}
+\kant[9-11]
+\section{Second Section}
+\kant[12-20]
+
+\chapter{The Second Chapter}
+\kant[21-35]
+\textbf{Another index entry}\index{Another entry}
+
+\part{Appendices}
+\appendix
+\useappendixchapterformat
+
+\chapter{Something useful to add}
+\kant[1-8]
+
+\backmatter
+
+\cleardoublepage
+\phantomsection
+\addcontentsline{toc}{chapter}{Index}
+\printindex
+
+\end{document}
