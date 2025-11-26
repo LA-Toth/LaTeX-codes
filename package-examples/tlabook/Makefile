@@ -15,7 +15,7 @@ remove:
 	rm tlabook-sample.pdf
 
 .PHONY: view
-view:
+view: tlabook-sample.pdf
 	open tlabook-sample.pdf
 
 -include Makefile.local.mk

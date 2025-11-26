@@ -8,9 +8,9 @@
 %% packages for the examples
 \usepackage{kantlipsum}
 
-\title{A Fancy Dcoument}
+\title{A Fancy Document}
 \subtitle{The Definitive Guide}
-\author{Johnk Smith}
+\author{John Smith}
 \email{email@example.com}
 \date{\currenttime, \today}
 
@@ -31,7 +31,6 @@
     \noindent%
     \makeatletter%
     \textcopyright{} 2024-2025, \@author%
-    \makeatother
 
     \vfill
     \begin{flushright}
@@ -43,19 +42,25 @@
 
 \tableofcontents
 
+
+%% Preface, explicitely added to the TOC
+\chapter*{Preface}
+\addcontentsline{toc}{chapter}{preface}
 \pagestyle{TBMainPageStyle}
 
-\chapter*{Preface}
 \kant[1-15]
 
 \mainmatter
 
 \part{First Part}
-
+%% First letter is larger
 \BigPartLetter{C}hapters 1-4 of this book is about this book.
 \kant[42]
 
+%% A regular chapter
 \chapter{The First Chapter}
+%% Each chapter has to have an extra skip due to the size of the chapter number
+\chapterskip
 
 \kant[1-8]
 \section{First Section}
@@ -65,6 +70,7 @@
 \kant[12-20]
 
 \chapter{The Second Chapter}
+\chapterskip
 \kant[21-35]
 \textbf{Another index entry}\index{Another entry}
 
@@ -73,6 +79,7 @@
 \useappendixchapterformat
 
 \chapter{Something useful to add}
+\chapterskip
 \kant[1-8]
 
 \backmatter
