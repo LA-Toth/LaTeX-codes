@@ -9,7 +9,7 @@
 \NeedsTeXFormat{LaTeX2e}
 \ProvidesPackage{tlabook}[2025/11/26]
 % packages
-\usepackage[a4paper,twoside,top=1.5cm,bottom=2.5cm]{geometry}
+\usepackage[a4paper,twoside,top=2cm,bottom=2.5cm]{geometry}
 
 \RequirePackage{color}
 \RequirePackage{calc}
@@ -88,6 +88,14 @@
 }
 \makeatother
 
+
+% Redefine chapter and section marks
+\renewcommand{\chaptermark}[1]{%
+  \markboth{#1}{}% only chapter title in leftmark
+}
+\renewcommand{\sectionmark}[1]{%
+  \markright{\thesection\ \ \ #1}%
+}
 \fancypagestyle{twoside}{%
   \fancyhf{}%
   \fancyhead[CE]{{\textcolor{black}{\nouppercase{\textbf \leftmark}}}}%
@@ -97,38 +105,58 @@
 }
 
 \fancypagestyle{TBMainPageStyle}{
-\fancyhf{}%
-\fancyhead[CE]{{\textcolor{black}{\nouppercase{\bf\leftmark}}}}%
-\fancyhead[CO]{{\textcolor{black}{\nouppercase{\bf\rightmark}}}}%
-\fancyhead[RO]{%
-  \makebox[0pt][l]{%
-    \begin{tikzpicture}[remember picture,overlay]
-      \fill[blue!20]
-      ([xshift=-\marginparwidth+\marginparsep]current page.north east) rectangle
-      ([yshift=-1in-\topmargin-\headheight-\voffset-\headruleskip]current page.north east);
-      \draw[line width=1.4pt]
-      ([xshift=-\marginparwidth+\marginparsep]current page.north east) --
-      ([xshift=-\marginparwidth+\marginparsep,yshift=-1in-\topmargin-\headheight-\voffset-\headruleskip]current page.north east);
-    \end{tikzpicture}%
-    \hspace*{0.7em}%
-    {\bf\large \thepage}%
-  }%
+  \fancyhf{}%
+  \fancyhead[RO]{%
+    \makebox[0pt][l]{%
+      \begin{tikzpicture}[remember picture,overlay, shift={(current page.north east)}]
+
+        \node[anchor=south east]
+        at (-\marginparwidth+\marginparsep+1cm,-1in-\topmargin-\headheight-\voffset+2pt) {\bf\rightmark};
+      \end{tikzpicture}%
+    }%
+  }
+  \fancyhead[LE]{%
+    \makebox[0pt][r]{%
+      \begin{tikzpicture}[remember picture,overlay, shift={(current page.north west)}]
+        \fill[blue!40]
+        (0, 0) rectangle
+        (\marginparwidth-\marginparsep-1cm,-1in-\topmargin-\headheight-\voffset-\headruleskip);
+        % vertical bar
+        \draw[line width=4pt]
+        (\marginparwidth-\marginparsep-1cm,0) --
+        (\marginparwidth-\marginparsep-1cm,-1in-\topmargin-\headheight-\voffset-\headruleskip);
+        % chapter number
+        \node[anchor=south east]
+        at (\marginparwidth-\marginparsep-1.3cm,-1in-\topmargin-\headheight-\voffset+2pt) {%
+          \ifnum\value{chapter}>0%
+          \bf\LARGE\color{white}\thechapter%
+          \fi%
+        };
+        % chapter title / left mark
+        \node[anchor=south west]
+        at (\marginparwidth-\marginparsep-0.7cm,-1in-\topmargin-\headheight-\voffset +2pt) {\bf\leftmark};
+      \end{tikzpicture}%
+    }%
+  }
+  \renewcommand{\headrulewidth}{0pt}
+  \fancyfoot[LE]{\bf\thepage}
+  \fancyfoot[RO]{\bf\thepage}
+
+  \renewcommand{\headrule}{%
+    \vskip-6pt
+    \vskip-\headruleskip
+    \ifodd\value{page}%
+      \makebox[0pt][l]{%
+        \rule{\paperwidth - \oddsidemargin - 1in}{0.5pt}}%
+    \else%
+      \hspace*{-\evensidemargin}\hspace*{-1in}%
+      \makebox[0pt][l]{%
+        \rule{\textwidth + \evensidemargin + 1in}{0.5pt}}%
+    \fi%
+    \vskip\headruleskip
+    \vskip\headrulewidth
+  }
 }
-\fancyhead[LE]{%
-\makebox[0pt][r]{%
-\begin{tikzpicture}[remember picture,overlay]
-  \fill[blue!20]
-  (current page.north west) rectangle
-  ([xshift=\marginparwidth-\marginparsep,yshift=-1in-\topmargin-\headheight-\voffset-\headruleskip]current page.north west);
-  \draw[line width=1.4pt]
-  ([xshift=\marginparwidth-\marginparsep]current page.north west) --
-  ([xshift=\marginparwidth-\marginparsep,yshift=-1in-\topmargin-\headheight-\voffset-\headruleskip]current page.north west);
-\end{tikzpicture}%
-{\bf\large \thepage}%
-\hspace*{0.7em}%
-}%
-}
-\renewcommand{\headrulewidth}{0pt}}
 
 \fancypagestyle{PageStyle}{
   \fancyhf{}
@@ -144,13 +172,25 @@
   \vskip-6pt
   \vskip-\headruleskip
   \ifodd\value{page}%
-    \hspace*{-\oddsidemargin}\hspace*{-1in}%
+    \makebox[0pt][l]{%
+      \rule{\paperwidth - \oddsidemargin - 1in}{0.5pt}}%
   \else%
     \hspace*{-\evensidemargin}\hspace*{-1in}%
+    \makebox[0pt][l]{%
+      \rule{\textwidth + \evensidemargin + 1in}{0.5pt}}%
   \fi%
-  \makebox[0pt][l]{\rule{\paperwidth}{0.5pt}}%
   \vskip\headruleskip
   \vskip\headrulewidth
+}
+
+
+\fancypagestyle{plain}{%
+  \fancyhf{}%
+  \fancyfoot[RO]{\bf \thepage}%
+  \renewcommand{\headrulewidth}{0pt}
+
+  \renewcommand{\headrule}{}
+
 }
 
 %% Part title definiton
