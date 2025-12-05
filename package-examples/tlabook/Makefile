@@ -1,21 +1,24 @@
 SHELL = /usr/bin/env bash
-.PHONY: all
-all: tlabook-sample.pdf
+BOOK=tlabook-doc
 
-tlabook-sample.pdf: tlabook-sample.tex *.sty
+.PHONY: all
+all: $(BOOK).pdf
+
+
+$(BOOK).pdf: $(BOOK).tex *.sty
 	latexmk
 
 clean:
-	rm -f tlabook-sample.idx tlabook-sample.fdb* tlabook-sample.log tlabook-sample.lof \
-	      tlabook-sample.lol tlabook-sample.lot tlabook-sample.toc tlabook-sample.ilg \
-	      tlabook-sample.ing tlabook-sample.ptc tlabook-sample.fls tlabook-sample.ind \
-	      tlabook-sample.aux tlabook-sample.bbl
+	rm -f $(BOOK).idx $(BOOK).fdb* $(BOOK).log $(BOOK).lof \
+	      $(BOOK).lol $(BOOK).lot $(BOOK).toc $(BOOK).ilg \
+	      $(BOOK).ing $(BOOK).ptc $(BOOK).fls $(BOOK).ind \
+	      $(BOOK).aux $(BOOK).bbl
 
 remove:
-	rm tlabook-sample.pdf
+	rm -f $(BOOK).pdf
 
 .PHONY: view
-view: tlabook-sample.pdf
-	open tlabook-sample.pdf
+view: $(BOOK).pdf
+	open $(BOOK).pdf
 
 -include Makefile.local.mk

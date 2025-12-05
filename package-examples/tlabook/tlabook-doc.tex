@@ -8,9 +8,9 @@
 %% packages for the examples
 \usepackage{kantlipsum}
 
-\title{A Fancy Document}
+\title{Tlabook Package Documentation}
 \subtitle{The Definitive Guide}
-\author{John Smith}
+\author{László Attila Tóth}
 \email{email@example.com}
 \date{\currenttime, \today}
 
@@ -18,10 +18,12 @@
 
 \begin{document}
 
+\pagestyle{TBMainPageStyle}
+
 \frontmatter
 
-%% The title page (or use \maketitle)
 \maketitle
+
 %% The back side of the title page
 \thispagestyle{empty}
 {
@@ -45,22 +47,35 @@
 
 %% Preface, explicitely added to the TOC
 \chapter*{Preface}
-\addcontentsline{toc}{chapter}{preface}
-\pagestyle{TBMainPageStyle}
+\addcontentsline{toc}{chapter}{Preface}
 
-\kant[1-15]
+This chapter is almost empty, the documentation starts in \cref{part:documentation}.
+The chapter is two-page long, to show what happens when there is no extra page
+before the next chapter (or part).
+
+\kant[1-5]
 
 \mainmatter
 
-\part{First Part}
+\part{Documentation}\label{part:documentation}
+
+\BigPartLetter{T}his part of the book is the actual documentation.
+
+\Cref{ch:layout} is about the layout and general format of a document.
+\Cref{ch:utils} is about additional utilities, formatting commands.
+
+\include{chapters/layout}
+\include{chapters/utils}
+
+\part{Second Part}\label{part:second-part}
 %% First letter is larger
-\BigPartLetter{C}hapters 1-4 of this book is about this book.
+\BigPartLetter{C}hapters as placeholders
+
 \kant[42]
 
 %% A regular chapter
 \chapter{The First Chapter}
 %% Each chapter has to have an extra skip due to the size of the chapter number
-\chapterskip
 
 \kant[1-8]
 \section{First Section}
@@ -70,7 +85,6 @@
 \kant[12-20]
 
 \chapter{The Second Chapter}
-\chapterskip
 \kant[21-35]
 \textbf{Another index entry}\index{Another entry}
 
@@ -79,7 +93,6 @@
 \useappendixchapterformat
 
 \chapter{Something useful to add}
-\chapterskip
 \kant[1-8]
 
 \backmatter
