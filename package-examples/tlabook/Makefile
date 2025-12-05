@@ -5,14 +5,15 @@ BOOK=tlabook-doc
 all: $(BOOK).pdf
 
 
-$(BOOK).pdf: $(BOOK).tex *.sty
+$(BOOK).pdf: $(BOOK).tex chapters/*.tex *.cls *.sty
 	latexmk
 
 clean:
 	rm -f $(BOOK).idx $(BOOK).fdb* $(BOOK).log $(BOOK).lof \
 	      $(BOOK).lol $(BOOK).lot $(BOOK).toc $(BOOK).ilg \
 	      $(BOOK).ing $(BOOK).ptc $(BOOK).fls $(BOOK).ind \
-	      $(BOOK).aux $(BOOK).bbl
+	      $(BOOK).aux $(BOOK).bbl \
+	      chapters/*.aux
 
 remove:
 	rm -f $(BOOK).pdf

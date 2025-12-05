@@ -1,0 +1,122 @@
+% Copyright (c) 2024-2025, Laszlo Attila Toth
+%
+% Additional utilities (commands), not essential
+% for the main code - graphics, etc.
+
+% initialization
+\NeedsTeXFormat{LaTeX2e}
+\ProvidesPackage{tlabookutils}[2025/12/05]
+
+\RequirePackage{listings}
+\RequirePackage{expl3}
+%\RequirePackage{pgfkeys}
+%\RequirePackage{graphicx}
+%\RequirePackage{xparse}
+
+\ExplSyntaxOn
+
+% TlaBookDefineSCItem::
+% new commands: #2 => \sc#2 and \sc#2i (i: to add to the index, as #1!#2)
+% recommended usage: indirectly, by defining eg:
+% \newcommand\definecustomer[1]{\TlaBookDefineSCItem{customer}{#1}}
+% and then \definecustomer{IBM} (\scibm, \scibmi)
+\newcommand{\TlaBookDefineSCItem}[2]{
+  \define_TBscitem:nn {#1} {#2}
+}
+
+% Internal function to define commands
+\cs_new_protected:Nn \define_TBscitem:nn {
+  % #1 = category (e.g., customers, devices)
+  % #2 = display name (e.g., IBM)
+
+  % Convert display name to lowercase for command name
+  \tl_set:Nn \l_tmpa_tl { \tl_lower_case:n {#2} }
+
+  % Define \<lowercase> as small caps
+  \cs_new:cpn { sc \l_tmpa_tl } { \textsc{#2} }
+
+  % Define \<lowercase>i as indexed version
+  \cs_new:cpn { sc \l_tmpa_tl i } {
+    \csname \l_tmpa_tl \endcsname \index{#1!#2}
+  }
+}
+
+\ExplSyntaxOff
+
+
+\lstdefinestyle{yaml}{
+  basicstyle=\color{blue}\footnotesize,
+  rulecolor=\color{black},
+  string=[s]{'}{'},
+  stringstyle=\color{blue},
+  comment=[l]{:},
+  commentstyle=\color{black},
+  morecomment=[l]{-}
+}
+
+% a format for menu delimited by \textrightarrow
+% where each menu entry is \emph
+% like \emph{File -> Open}, written as \menu{File}[Open]
+% up to 3 optional args (beyond that the menu UX is bad)
+\NewDocumentCommand\menu{m!ooo}{%
+  \emph{#1%
+    \IfNoValueF{#2}{\space\textrightarrow\space#2%
+      \IfNoValueF{#3}{\space\textrightarrow\space#3%
+        \IfNoValueF{#4}{\space\textrightarrow\space#4%
+        }%
+      }%
+    }}%
+}
+
+% When the \emph and the \index are needed at the same time
+\newcommand{\emphidx}[1]{\emph{#1}\index{#1}}
+
+% \makeatletter
+% \usepackage{xparse}
+% \usepackage{pgfkeys}
+% \usepackage{graphicx}
+
+% Define a key family for \usefigure
+% \pgfkeys{
+%   /usefigure/.is family, /usefigure,
+%   fig/.store in=\uf@fig,
+%   caption/.store in=\uf@caption,
+%   label/.store in=\uf@label,
+%   figwidth/.store in=\uf@figwidth,
+%   right/.is if=uf@right,
+% }
+
+% % Default values
+% \def\uf@fig{}
+% \def\uf@caption{}
+% \def\uf@label{}
+% \def\uf@figwidth{}
+% \newif\ifuf@right
+% \uf@rightfalse
+
+% % Define the command
+% \NewDocumentCommand{\usefigure}{m}{%
+%   % Parse the key–value list
+%   \pgfkeys{/usefigure, #1}%
+%   %
+%   \begin{figure}
+%     \centering
+%     \ifuf@right
+%       % Right mode: graphics + caption in minipages
+%       \begin{minipage}{0.6\textwidth}
+%         \includegraphics[width=\ifx\uf@figwidth\empty\textwidth\else\uf@figwidth\fi]{\uf@fig}
+%       \end{minipage}%
+%       \hfill
+%       \begin{minipage}{0.35\textwidth}
+%         \caption{\uf@caption}%
+%         \ifx\uf@label\empty\else\label{\uf@label}\fi
+%       \end{minipage}
+%     \else
+%       % Normal mode: usual order
+%       \includegraphics[width=\ifx\uf@figwidth\empty\textwidth\else\uf@figwidth\fi]{\uf@fig}
+%       \caption{\uf@caption}%
+%       \ifx\uf@label\empty\else\label{\uf@label}\fi
+%     \fi
+%   \end{figure}
+% }
+% \makeatother

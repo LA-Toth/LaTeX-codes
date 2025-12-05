@@ -1,47 +1,55 @@
 % Copyright (c) 2024-2025, Laszlo Attila Toth
 %
-% My main set up for a book
-% May also work for other documents
-%
-% It uses titlesec, so not compatible with scrbook (KOMA-Script)
 
-% initialization
 \NeedsTeXFormat{LaTeX2e}
-\ProvidesPackage{tlabook}[2025/11/26]
-% packages
-\usepackage[a4paper,twoside,top=2cm,bottom=2.5cm]{geometry}
+\ProvidesClass{tlabook}[2025/12/05 TlaBook class]
+
+% Load the base class with fixed options
+\LoadClass[a4paper,10pt,twoside,openright]{book}
+
+% Prevent options from being passed to this class
+\DeclareOption*{%
+  \ClassError{mybook}{Unknown option `\CurrentOption'}%
+    {This class does not accept options.}%
+}
+
+% Process options (none are allowed, so this just enforces the error above)
+\ProcessOptions\relax
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%
+%%             PACKAGES
+%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \RequirePackage{color}
 \RequirePackage{calc}
-\RequirePackage{expl3}
 \RequirePackage{fontspec} % LuaLaTeX
 \RequirePackage{fancyhdr}
-\RequirePackage{listings}
-\RequirePackage{makeidx}
-\RequirePackage{tcolorbox}
-\RequirePackage{shorttoc}
+\RequirePackage[top=2cm,bottom=2.5cm]{geometry}
+\RequirePackage{marginnote}
+\RequirePackage[all]{nowidow}
+\RequirePackage{tikz}
 \RequirePackage{titlesec}
 \RequirePackage{titletoc}
-\RequirePackage{amssymb}
-\RequirePackage{marginnote}
 \RequirePackage{hyperref}
 \RequirePackage{varioref}
 \RequirePackage{cleveref} % last
 
-% initial code
-% options
-% loading options
-% package loading
-% main code
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%
+%%             COLOR DEFINITIONS and HYPERLINK COLOR SETUP
+%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \definecolor{darkblue}{rgb}{0, 0, 0.4}
-\definecolor{gold}{rgb}{1.0, 0.84, 0.0}
-\definecolor{ChapNoColor}{cmyk}{0.17,0.12,0.12,0}	% Chapter Label(No.)
-%\definecolor{ChapTitleColor}{cmyk}{0.77,0.52,0.33,0.09} % Chapter Title Text
+\definecolor{ChapNoColor}{cmyk}{0.17,0.12,0.12,0}
 \definecolor{ChapTitleColor}{rgb}{.2,.2,.8}
-\definecolor{SecLevelsColor}{RGB}{71, 107, 133} % Color of Sectional Levels Head
+\definecolor{HighlightTitleColor}{RGB}{71, 107, 133}
 \definecolor{HighlightBodyColor}{cmyk}{0.57,0.48,0.48,0.15} % Highlight Env. Color
-\definecolor{ChapTopBack}{cmyk}{0.02,0.03,0.08,0} % ChapterTopics Env. Background
+
 
 \hypersetup{
   colorlinks = true,
@@ -50,12 +58,70 @@
   citecolor=blue
 }
 
-% Increase the vertical space between the paragraphs
-\setlength{\parskip}{5pt}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%
+%%             GEOMETRY / LAYOUT
+%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
 \setlength{\headheight}{15pt}
+
+%% Place 'This page intentionally left blank' to empty pages
+\makeatletter
+\def\cleardoublepage{%
+  \clearpage
+  \if@twoside
+    \ifodd\c@page
+    \else
+      \null
+      \thispagestyle{empty}
+      \vfill
+      \begin{center}
+        \textit{This page intentionally left blank}
+      \end{center}
+      \vfill
+      \newpage
+    \fi
+  \fi
+}
+\makeatother
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%
+%%             FONTS and PARAGRAPHS
+%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \setmainfont{EB Garamond}
 
+% Placeholders, don't want to change it here
+\newcommand{\ChapterMarkFont}{}
+\newcommand{\HighlightTitleFont}{}
+\newcommand{\HighlightBodyFont}{}
+
+\newcommand{\BigPartLetterFont}{}
+
+\renewcommand\marginfont{\strut\color{darkblue}\sffamily\it}
+
+\newcommand{\BigPartLetter}[1]{
+  {\BigPartLetterFont\fontsize{35}{36}\selectfont\color{ChapTitleColor}#1}
+}
+
+
+% Increase the vertical space between the paragraphs
+\setlength{\parskip}{5pt}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%
+%%             TITLE PAGE
+%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\makeatletter
 %% \subtitle and \email for title page
 \def\@subtitle{\@latex@warning@no@line{No \noexpand\subtitle given}}
 \def\@email{\@latex@warning@no@line{No \noexpand\email given}}
@@ -88,6 +154,12 @@
 }
 \makeatother
 
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%
+%%             HEADERS and FOOTERS (PAGE STYLES)
+%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 % Redefine chapter and section marks
 \renewcommand{\chaptermark}[1]{%
@@ -183,7 +255,6 @@
   \vskip\headrulewidth
 }
 
-
 \fancypagestyle{plain}{%
   \fancyhf{}%
   \fancyfoot[RO]{\bf \thepage}%
@@ -192,6 +263,13 @@
   \renewcommand{\headrule}{}
 
 }
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%
+%%             TITLE FORMATS
+%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 %% Part title definiton
 \titleclass{\part}{top}
@@ -203,7 +281,6 @@
 {20pt}
 {\ChapHeadFont\fontsize{40pt}{42pt}\selectfont}[\vspace{-5cm}]
 
-\makeatletter
 \newcommand\ChapHeadFont{}
 \newcommand{\LowerRule}[1]{\vspace{-15pt}\rule{#1\linewidth}{0.5pt}}
 
@@ -215,7 +292,7 @@
 {\raggedleft{\resizebox{!}{6\baselineskip}{\itshape\fontsize{225pt}{230pt}\color{ChapNoColor} \thechapter}}}
 {-110pt}
 {\ChapHeadFont\fontsize{30pt}{30pt}\selectfont\color{ChapTitleColor}\bf}
-[\LowerRule{0.7}]
+[\LowerRule{0.7}\vspace{2cm}]
 
 
 \newcommand{\useappendixchapterformat}{
@@ -227,7 +304,7 @@
         \itshape\color{ChapNoColor} \thechapter}}}%
   {-110pt}%
   {\ChapHeadFont\fontsize{30pt}{30pt}\selectfont\color{ChapTitleColor}\bf}
-  [\LowerRule{0.7}]
+  [\LowerRule{0.7}\vspace{2cm}]
 }
 
 %% Formatting the Front Matter Numberless Chapters, Preface, Acknowledgments,...
@@ -239,95 +316,22 @@
 
 \newcommand\tocseparatorsymbol{{\tiny\ensuremath{\textcolor{gray}\blacksquare}}}
 \titlespacing*{\chapter}{1pc}{*4}{*2.3}[1pc]
-\titlecontents*{p-section}[0pt]{\small\itshape\fillast}{}{}{}[ --- ][.]
 \titlecontents*{subsection}[50pt]{\small\itshape\fillast}{}{}{\enskip\thecontentspage}[\enskip\tocseparatorsymbol\enskip]
 
-%
-% Add support of brief TOC, like in a Manning book
-%
-\newcommand{\brieftableofcontents}{\shorttableofcontents{Brief Contents}{0}}
 
-% a format for menu delimited by \textrightarrow
-% where each menu entry is \emph
-% like \emph{File -> Open}, written as \menu{File}[Open]
-% up to 3 optional args (beyond that the menu UX is bad)
-\NewDocumentCommand\menu{m!ooo}{%
-  \emph{#1%
-    \IfNoValueF{#2}{\space\textrightarrow\space#2%
-      \IfNoValueF{#3}{\space\textrightarrow\space#3%
-        \IfNoValueF{#4}{\space\textrightarrow\space#4}%
-      }%
-    }}%
-}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%
+%%             OTHER COMPONENTS (NOTES, HIGHLIGHTS)
+%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-% When the \emph and the \index are needed at the same time
-\newcommand{\emphidx}[1]{\emph{#1}\index{#1}}
 
-\newcommand{\ChapterMarkFont}{}
-\newcommand{\HighlightTitleFont}{}
-\newcommand{\HighlightBodyFont}{}
-\newcommand{\BigPartLetterFont}{}
-\newcommand{\BigPartLetter}[1]{
-  {\BigPartLetterFont\fontsize{35}{36}\selectfont\color{ChapTitleColor}#1}
-}
-
-\newcommand{\chapterskip}{\vspace{2cm}}
-
-%\renewcommand\raggedrightmarginnote{\centering}
-\renewcommand\marginfont{\strut\color{darkblue}\sffamily\it}
-\NewDocumentCommand{\TlaBookMarginNote}{m O{8pt}}{%
+\NewDocumentCommand{\TBMarginNote}{m O{8pt}}{%
   \marginnote{#1}[#2]}
 
-\usepackage[all]{nowidow}
 
-\ExplSyntaxOn
 
-% TlaBookDefineSCItem::
-% new commands: #2 => \sc#2 and \sc#2i (i: to add to the index, as #1!#2)
-% recommended usage: indirectly, by defining eg:
-% \newcommand\definecustomer[1]{\TlaBookDefineSCItem{customer}{#1}}
-% and then \definecustomer{IBM} (\scibm, \scibmi)
-\newcommand{\TlaBookDefineSCItem}[2]{
-  \define_TBscitem:nn {#1} {#2}
-}
-
-% Internal function to define commands
-\cs_new_protected:Nn \define_TBscitem:nn {
-  % #1 = category (e.g., customers, devices)
-  % #2 = display name (e.g., IBM)
-
-  % Convert display name to lowercase for command name
-  \tl_set:Nn \l_tmpa_tl { \tl_lower_case:n {#2} }
-
-  % Define \<lowercase> as small caps
-  \cs_new:cpn { sc \l_tmpa_tl } { \textsc{#2} }
-
-  % Define \<lowercase>i as indexed version
-  \cs_new:cpn { sc \l_tmpa_tl i } {
-    \csname \l_tmpa_tl \endcsname \index{#1!#2}
-  }
-}
-
-\ExplSyntaxOff
-
-\newcommand{\blankpage}{
-  \clearpage
-  \thispagestyle{empty}
-  \null\vfill
-  \begin{center}
-    \textit{This page is intentionally left blank}
-  \end{center}
-  \vfill\null
-  \clearpage
-}
-\newcommand{\maybeBlankPage}{
-  \clearpage
-  \ifodd\value{page}\else
-    \blankpage
-  \fi
-}
-
-\newenvironment{TlaBookNote}{
+\newenvironment{TBNote}{
   \begin{center}
     \begin{minipage}{0.9\textwidth}
       {\ChapterMarkFont\fontsize{11.5pt}{12pt}\selectfont
@@ -350,32 +354,3 @@
   \end{tcolorbox}
   \vspace{0.5cm}
 }
-
-\lstdefinestyle{yaml}{
-  basicstyle=\color{blue}\footnotesize,
-  rulecolor=\color{black},
-  string=[s]{'}{'},
-  stringstyle=\color{blue},
-  comment=[l]{:},
-  commentstyle=\color{black},
-  morecomment=[l]{-}
-}
-
-\makeatletter
-\def\cleardoublepage{%
-  \clearpage
-  \if@twoside
-    \ifodd\c@page
-    \else
-      \null
-      \thispagestyle{empty}
-      \vfill
-      \begin{center}
-        \textit{This page intentionally left blank}
-      \end{center}
-      \vfill
-      \newpage
-    \fi
-  \fi
-}
-\makeatother
