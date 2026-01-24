@@ -5,7 +5,7 @@
 \ProvidesClass{tlabook}[2025/12/05 TlaBook class]
 
 % Load the base class with fixed options
-\LoadClass[a4paper,10pt,twoside,openright]{book}
+\LoadClass[10pt,twoside,openright]{book}
 
 % Prevent options from being passed to this class
 \DeclareOption*{%
@@ -23,11 +23,20 @@
 %%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
+\RequirePackage[
+  paperwidth=174mm,
+  paperheight=234mm,
+  inner=15mm,
+  outer=30mm,
+  top=20mm,
+  bottom=25mm,
+  marginparwidth=25mm
+]{geometry}
+%\RequirePackage[top=2cm,bottom=2.5cm]{geometry}
 \RequirePackage{color}
 \RequirePackage{calc}
 \RequirePackage{fontspec} % LuaLaTeX
 \RequirePackage{fancyhdr}
-\RequirePackage[top=2cm,bottom=2.5cm]{geometry}
 \RequirePackage{marginnote}
 \RequirePackage[all]{nowidow}
 \RequirePackage{tikz}
@@ -183,7 +192,8 @@
       \begin{tikzpicture}[remember picture,overlay, shift={(current page.north east)}]
 
         \node[anchor=south east]
-        at (-\marginparwidth+\marginparsep+1cm,-1in-\topmargin-\headheight-\voffset+2pt) {\bf\rightmark};
+        %at (-(\paperwidth - (\textwidth + \oddsidemargin + 1in))+1cm, -1in-\topmargin-\headheight-\voffset+2pt) {\bf\rightmark};
+        at (-\paperwidth+ \textwidth + \oddsidemargin + 1in +1cm, -1in-\topmargin-\headheight-\voffset+2pt) {\bf\rightmark};
       \end{tikzpicture}%
     }%
   }
@@ -192,21 +202,21 @@
       \begin{tikzpicture}[remember picture,overlay, shift={(current page.north west)}]
         \fill[blue!40]
         (0, 0) rectangle
-        (\marginparwidth-\marginparsep-1cm,-1in-\topmargin-\headheight-\voffset-\headruleskip);
+        (\evensidemargin + 1in-1cm,-1in-\topmargin-\headheight-\voffset-\headruleskip);
         % vertical bar
         \draw[line width=4pt]
-        (\marginparwidth-\marginparsep-1cm,0) --
-        (\marginparwidth-\marginparsep-1cm,-1in-\topmargin-\headheight-\voffset-\headruleskip);
+        (\evensidemargin + 1in-1cm,0) --
+        (\evensidemargin + 1in-1cm,-1in-\topmargin-\headheight-\voffset-\headruleskip);
         % chapter number
         \node[anchor=south east]
-        at (\marginparwidth-\marginparsep-1.3cm,-1in-\topmargin-\headheight-\voffset+2pt) {%
+        at (\evensidemargin + 1in-1.3cm,-1in-\topmargin-\headheight-\voffset+2pt) {%
           \ifnum\value{chapter}>0%
           \bf\LARGE\color{white}\thechapter%
           \fi%
         };
         % chapter title / left mark
         \node[anchor=south west]
-        at (\marginparwidth-\marginparsep-0.7cm,-1in-\topmargin-\headheight-\voffset +2pt) {\bf\leftmark};
+        at (\evensidemargin + 1in-0.7cm,-1in-\topmargin-\headheight-\voffset +2pt) {\bf\leftmark};
       \end{tikzpicture}%
     }%
   }
@@ -325,11 +335,9 @@
 %%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-
-\NewDocumentCommand{\TBMarginNote}{m O{8pt}}{%
-  \marginnote{#1}[#2]}
-
-
+\NewDocumentCommand{\TBMarginNote}{m O{1\baselineskip}}{%
+  \marginnote{\parbox[t]{\marginparwidth}{\marginfont\raggedright#1}}[#2]%
+}
 
 \newenvironment{TBNote}{
   \begin{center}
