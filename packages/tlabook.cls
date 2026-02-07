@@ -1,8 +1,8 @@
-% Copyright (c) 2024-2025, Laszlo Attila Toth
+% Copyright (c) 2024-2026, Laszlo Attila Toth
 %
 
 \NeedsTeXFormat{LaTeX2e}
-\ProvidesClass{tlabook}[2025/12/05 TlaBook class]
+\ProvidesClass{tlabook}[2026/02/06 TlaBook class]
 
 % Load the base class with fixed options
 \LoadClass[10pt,twoside,openright]{book}
@@ -38,7 +38,6 @@
 \RequirePackage{fontspec} % LuaLaTeX
 \RequirePackage{fancyhdr}
 \RequirePackage{marginnote}
-\RequirePackage[all]{nowidow}
 \RequirePackage{tikz}
 \RequirePackage{titlesec}
 \RequirePackage{titletoc}
@@ -54,11 +53,10 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \definecolor{darkblue}{rgb}{0, 0, 0.4}
-\definecolor{ChapNoColor}{cmyk}{0.17,0.12,0.12,0}
-\definecolor{ChapTitleColor}{rgb}{.2,.2,.8}
+\definecolor{ChapterNumColor}{cmyk}{0.17,0.12,0.12,0}
+\definecolor{ChapterTitleColor}{rgb}{.2,.2,.8}
 \definecolor{HighlightTitleColor}{RGB}{71, 107, 133}
-\definecolor{HighlightBodyColor}{cmyk}{0.57,0.48,0.48,0.15} % Highlight Env. Color
-
+\definecolor{HighlightBodyColor}{cmyk}{0.57,0.48,0.48,0.15}
 
 \hypersetup{
   colorlinks = true,
@@ -116,13 +114,12 @@
 \renewcommand\marginfont{\strut\color{darkblue}\sffamily\it}
 
 \newcommand{\BigPartLetter}[1]{
-  {\BigPartLetterFont\fontsize{35}{36}\selectfont\color{ChapTitleColor}#1}
+  {\BigPartLetterFont\fontsize{35}{36}\selectfont\color{ChapterTitleColor}#1}
 }
 
 
 % Increase the vertical space between the paragraphs
 \setlength{\parskip}{5pt}
-
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%
@@ -269,9 +266,7 @@
   \fancyhf{}%
   \fancyfoot[RO]{\bf \thepage}%
   \renewcommand{\headrulewidth}{0pt}
-
   \renewcommand{\headrule}{}
-
 }
 
 
@@ -284,7 +279,7 @@
 %% Part title definiton
 \titleclass{\part}{top}
 \titleformat{\part}[display]
-{\vspace*{-3cm}\raggedleft\color{ChapTitleColor}}
+{\vspace*{-3cm}\raggedleft\color{ChapterTitleColor}}
 {
   \raggedleft\resizebox{!}{\baselineskip}{\underline{\partname~\thepart}}
 }
@@ -299,9 +294,9 @@
 {%
   \vspace*{1.5ex}\huge\centering%
 }%
-{\raggedleft{\resizebox{!}{6\baselineskip}{\itshape\fontsize{225pt}{230pt}\color{ChapNoColor} \thechapter}}}
+{\raggedleft{\resizebox{!}{6\baselineskip}{\itshape\fontsize{225pt}{230pt}\color{ChapterNumColor} \thechapter}}}
 {-110pt}
-{\ChapHeadFont\fontsize{30pt}{30pt}\selectfont\color{ChapTitleColor}\bf}
+{\ChapHeadFont\fontsize{30pt}{30pt}\selectfont\color{ChapterTitleColor}\bf}
 [\LowerRule{0.7}\vspace{2cm}]
 
 
@@ -310,17 +305,17 @@
   {%
     \vspace*{1.5ex}\huge\centering%
   }%
-  {\raggedleft{\itshape\color{ChapNoColor}\textbf{Appendix}\resizebox{!}{6\baselineskip}{%
-        \itshape\color{ChapNoColor} \thechapter}}}%
+  {\raggedleft{\itshape\color{ChapterNumColor}\textbf{Appendix}\resizebox{!}{6\baselineskip}{%
+        \itshape\color{ChapterNumColor} \thechapter}}}%
   {-110pt}%
-  {\ChapHeadFont\fontsize{30pt}{30pt}\selectfont\color{ChapTitleColor}\bf}
+  {\ChapHeadFont\fontsize{30pt}{30pt}\selectfont\color{ChapterTitleColor}\bf}
   [\LowerRule{0.7}\vspace{2cm}]
 }
 
 %% Formatting the Front Matter Numberless Chapters, Preface, Acknowledgments,...
 \titleformat{name=\chapter,numberless}[display]
 {\vspace*{7cm}\raggedleft}{}{0pt}
-{\ChapHeadFont\fontsize{30pt}{30pt}\selectfont\color{ChapTitleColor}}
+{\ChapHeadFont\fontsize{30pt}{30pt}\selectfont\color{ChapterTitleColor}}
 [\LowerRule{1}]
 \makeatother
 
